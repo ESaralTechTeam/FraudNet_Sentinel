@@ -3,6 +3,8 @@ from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from typing import List, Optional
 from datetime import datetime
+from mangum import Mangum
+
 import uvicorn
 
 from routes import complaints, beneficiaries, alerts, analytics
@@ -40,6 +42,9 @@ async def root():
 @app.get("/health")
 async def health_check():
     return {"status": "healthy"}
+
+#lambda Handler
+handler = Mangum(app)
 
 # Include routers
 app.include_router(complaints.router, prefix="/api/v1", tags=["Complaints"])

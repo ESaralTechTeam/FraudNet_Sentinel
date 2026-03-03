@@ -3,8 +3,10 @@ import json
 from datetime import datetime
 from typing import List, Dict, Optional
 import hashlib
+import os
 
-DB_PATH = "leakage_detection.db"
+# Lambda-compatible database path - use /tmp for writable storage in Lambda
+DB_PATH = os.environ.get('DB_PATH', '/tmp/leakage_detection.db')
 
 def get_db():
     conn = sqlite3.connect(DB_PATH)

@@ -1,14 +1,16 @@
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from datetime import datetime
 from mangum import Mangum
 
 from routes import complaints, beneficiaries, alerts, analytics
-from services.dynamodb import init_db
 
-app = FastAPI(title="Economic Leakage Detection API", version="1.0.0")
+app = FastAPI(
+    title="Economic Leakage Detection API",
+    version="1.0.0"
+)
 
-# CORS middleware
+# CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -17,32 +19,25 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Initialize database
-@app.on_event("startup")
-async def startup_event():
-    init_db()
-    print("✅ DynamoDB initialized")
-    print("✅ AI models loaded")
-
-# Health check
+# Root endpoint
 @app.get("/")
 async def root():
     return {
         "status": "running",
         "service": "Economic Leakage Detection API",
         "version": "1.0.0",
-        "timestamp": datetime.now().isoformat()
+        "timestamp": datetime.utcnow().isoformat()
     }
 
 @app.get("/health")
 async def health_check():
     return {"status": "healthy"}
 
-# Lambda Handler
-handler = Mangum(app)
-
-# Include routers
+# Routers
 app.include_router(complaints.router, prefix="/api/v1", tags=["Complaints"])
 app.include_router(beneficiaries.router, prefix="/api/v1", tags=["Beneficiaries"])
 app.include_router(alerts.router, prefix="/api/v1", tags=["Alerts"])
 app.include_router(analytics.router, prefix="/api/v1", tags=["Analytics"])
+
+# Lambda handler
+handler = Mangum(app)

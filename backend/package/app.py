@@ -7,7 +7,9 @@ from routes import complaints, beneficiaries, alerts, analytics
 
 app = FastAPI(
     title="Economic Leakage Detection API",
-    version="1.0.0"
+    version="1.0.0",
+    description="AI-powered system for detecting welfare scheme fraud and economic leakage",
+    root_path="/prod"
 )
 
 # CORS

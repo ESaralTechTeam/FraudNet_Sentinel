@@ -8,4 +8,4 @@ jellyfish==1.0.3
 scikit-learn==1.4.0
 numpy==1.26.3
 networkx==3.2.1
-boto3==1.34.0
+boto3==1.34.69

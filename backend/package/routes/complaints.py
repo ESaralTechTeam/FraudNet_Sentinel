@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from models.schemas import ComplaintCreate, Complaint
-from services.database import ComplaintDB
+from services.dynamodb import ComplaintDB
 from ai_models.complaint_analyzer import complaint_analyzer
 from datetime import datetime
 

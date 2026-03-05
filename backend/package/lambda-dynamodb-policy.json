@@ -1,0 +1,56 @@
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:PutItem",
+        "dynamodb:GetItem",
+        "dynamodb:UpdateItem",
+        "dynamodb:DeleteItem",
+        "dynamodb:Query",
+        "dynamodb:Scan"
+      ],
+      "Resource": [
+        "arn:aws:dynamodb:*:*:table/dev-beneficiaries",
+        "arn:aws:dynamodb:*:*:table/dev-beneficiaries/index/*",
+        "arn:aws:dynamodb:*:*:table/dev-complaints",
+        "arn:aws:dynamodb:*:*:table/dev-complaints/index/*",
+        "arn:aws:dynamodb:*:*:table/dev-risk_scores",
+        "arn:aws:dynamodb:*:*:table/dev-alerts",
+        "arn:aws:dynamodb:*:*:table/dev-alerts/index/*",
+        "arn:aws:dynamodb:*:*:table/staging-beneficiaries",
+        "arn:aws:dynamodb:*:*:table/staging-beneficiaries/index/*",
+        "arn:aws:dynamodb:*:*:table/staging-complaints",
+        "arn:aws:dynamodb:*:*:table/staging-complaints/index/*",
+        "arn:aws:dynamodb:*:*:table/staging-risk_scores",
+        "arn:aws:dynamodb:*:*:table/staging-alerts",
+        "arn:aws:dynamodb:*:*:table/staging-alerts/index/*",
+        "arn:aws:dynamodb:*:*:table/prod-beneficiaries",
+        "arn:aws:dynamodb:*:*:table/prod-beneficiaries/index/*",
+        "arn:aws:dynamodb:*:*:table/prod-complaints",
+        "arn:aws:dynamodb:*:*:table/prod-complaints/index/*",
+        "arn:aws:dynamodb:*:*:table/prod-risk_scores",
+        "arn:aws:dynamodb:*:*:table/prod-alerts",
+        "arn:aws:dynamodb:*:*:table/prod-alerts/index/*"
+      ]
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "dynamodb:ListTables",
+        "dynamodb:DescribeTable"
+      ],
+      "Resource": "*"
+    },
+    {
+      "Effect": "Allow",
+      "Action": [
+        "logs:CreateLogGroup",
+        "logs:CreateLogStream",
+        "logs:PutLogEvents"
+      ],
+      "Resource": "arn:aws:logs:*:*:*"
+    }
+  ]
+}

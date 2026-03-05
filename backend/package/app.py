@@ -1,12 +1,10 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from pydantic import BaseModel
-from typing import List, Optional
 from datetime import datetime
 from mangum import Mangum
 
 from routes import complaints, beneficiaries, alerts, analytics
-from services.database import init_db
+from services.dynamodb import init_db
 
 app = FastAPI(title="Economic Leakage Detection API", version="1.0.0")
 
@@ -23,7 +21,7 @@ app.add_middleware(
 @app.on_event("startup")
 async def startup_event():
     init_db()
-    print("✅ Database initialized")
+    print("✅ DynamoDB initialized")
     print("✅ AI models loaded")
 
 # Health check

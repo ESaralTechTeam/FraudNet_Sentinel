@@ -1,0 +1,174 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'DynamoDB Tables for Economic Leakage Detection System'
+
+Parameters:
+  Environment:
+    Type: String
+    Default: dev
+    AllowedValues:
+      - dev
+      - staging
+      - prod
+    Description: Environment name
+
+Resources:
+  # Beneficiaries Table
+  BeneficiariesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${Environment}-beneficiaries'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: beneficiary_id
+          AttributeType: S
+        - AttributeName: district
+          AttributeType: S
+        - AttributeName: risk_score
+          AttributeType: N
+      KeySchema:
+        - AttributeName: beneficiary_id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: district-index
+          KeySchema:
+            - AttributeName: district
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+        - IndexName: risk-score-index
+          KeySchema:
+            - AttributeName: risk_score
+              KeyType: HASH
+          Projection:
+            ProjectionType: ALL
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Application
+          Value: EconomicLeakageDetection
+
+  # Complaints Table
+  ComplaintsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${Environment}-complaints'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: complaint_id
+          AttributeType: S
+        - AttributeName: status
+          AttributeType: S
+        - AttributeName: created_at
+          AttributeType: S
+      KeySchema:
+        - AttributeName: complaint_id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: status-created-index
+          KeySchema:
+            - AttributeName: status
+              KeyType: HASH
+            - AttributeName: created_at
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Application
+          Value: EconomicLeakageDetection
+
+  # Risk Scores Table
+  RiskScoresTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${Environment}-risk_scores'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: beneficiary_id
+          AttributeType: S
+        - AttributeName: timestamp
+          AttributeType: S
+      KeySchema:
+        - AttributeName: beneficiary_id
+          KeyType: HASH
+        - AttributeName: timestamp
+          KeyType: RANGE
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      Tags:
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Application
+          Value: EconomicLeakageDetection
+
+  # Alerts Table
+  AlertsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: !Sub '${Environment}-alerts'
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: alert_id
+          AttributeType: S
+        - AttributeName: severity
+          AttributeType: S
+        - AttributeName: created_at
+          AttributeType: S
+      KeySchema:
+        - AttributeName: alert_id
+          KeyType: HASH
+      GlobalSecondaryIndexes:
+        - IndexName: severity-created-index
+          KeySchema:
+            - AttributeName: severity
+              KeyType: HASH
+            - AttributeName: created_at
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
+      StreamSpecification:
+        StreamViewType: NEW_AND_OLD_IMAGES
+      PointInTimeRecoverySpecification:
+        PointInTimeRecoveryEnabled: true
+      Tags:
+        - Key: Environment
+          Value: !Ref Environment
+        - Key: Application
+          Value: EconomicLeakageDetection
+
+Outputs:
+  BeneficiariesTableName:
+    Description: Beneficiaries table name
+    Value: !Ref BeneficiariesTable
+    Export:
+      Name: !Sub '${Environment}-BeneficiariesTable'
+
+  ComplaintsTableName:
+    Description: Complaints table name
+    Value: !Ref ComplaintsTable
+    Export:
+      Name: !Sub '${Environment}-ComplaintsTable'
+
+  RiskScoresTableName:
+    Description: Risk Scores table name
+    Value: !Ref RiskScoresTable
+    Export:
+      Name: !Sub '${Environment}-RiskScoresTable'
+
+  AlertsTableName:
+    Description: Alerts table name
+    Value: !Ref AlertsTable
+    Export:
+      Name: !Sub '${Environment}-AlertsTable'
